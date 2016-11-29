@@ -4,6 +4,9 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -12,10 +15,13 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 
+import java.io.File;
+
 import static android.R.attr.data;
 
 public class MainActivity extends AppCompatActivity {
     private ImageView img;
+    private File sdroot, photoFile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         img = (ImageView)findViewById(R.id.img);
+        sdroot = Environment.getExternalStorageDirectory();
 
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.CAMERA)
@@ -40,17 +47,30 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(intent, 1);
     }
+    public void test2(View v){
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        photoFile = new File(sdroot,  "brad.jpg");
+        Uri photoUri = Uri.fromFile(photoFile);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
+        startActivityForResult(intent, 2);
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1 && resultCode == RESULT_OK){
             take1(data);
+        }else if (requestCode == 2 && resultCode == RESULT_OK){
+            take2(data);
         }
     }
 
     private void take1(Intent it){
         Bitmap bmp = (Bitmap)it.getExtras().get("data");
+        img.setImageBitmap(bmp);
+    }
+    private void take2(Intent it){
+        Bitmap bmp = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
         img.setImageBitmap(bmp);
     }
 
