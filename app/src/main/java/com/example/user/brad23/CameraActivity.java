@@ -8,6 +8,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.FrameLayout;
 
 public class CameraActivity extends AppCompatActivity {
@@ -42,7 +43,33 @@ public class CameraActivity extends AppCompatActivity {
         frameLayout = (FrameLayout)findViewById(R.id.frameLayout);
         myPreview = new MyPreview(this,camera);
         frameLayout.addView(myPreview);
+
+        frameLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                camera.takePicture(new MyShutter(),null,new MyPicCallback());
+            }
+        });
+
     }
+
+    private class MyShutter implements Camera.ShutterCallback {
+        @Override
+        public void onShutter() {
+
+        }
+    }
+
+    private class MyPicCallback implements Camera.PictureCallback {
+        @Override
+        public void onPictureTaken(byte[] bytes, Camera camera) {
+
+        }
+    }
+
+
+
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
